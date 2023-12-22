@@ -1,0 +1,26 @@
+---
+- name: Security configuration
+  hosts: web_scraping
+  become: yes
+  vars:
+    firewall_package: ufw
+    allowed_ssh_port: 22
+    allowed_ssh_ips: "any" # You can change this to a specific IP or CIDR notation to limit access
+
+  tasks:
+    - name: Install UFW
+      apt:
+        name: "{{ firewall_package }}"
+        state: present
+
+    - name: Enable UFW
+      ufw:
+        state: enabled
+
+    - name: Allow SSH through UFW
+      ufw:
+        rule: allow
+        name: ssh
+        port: "{{ allowed_ssh_port }}"
+        src: "{{ allowed_ssh_ips }}"
+

@@ -1,0 +1,139 @@
+---
+- name: Set up Ubuntu Desktop
+  hosts: ubuntu_hosts
+  become: yes
+  tasks:
+  
+  # Repositories
+  - name: Add Canonical Partners repository
+    apt_repository:
+      repo: "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
+      state: present
+  
+  - name: Ensure all desired repositories are enabled
+    apt_repository:
+      repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} {{ item }}"
+      state: present
+    loop:
+      - main
+      - universe
+      - restricted
+      - multiverse
+  
+  # Update System
+  - name: Safe update apt and upgrade system
+    apt:
+      upgrade: safe
+      update_cache: yes
+
+  # Settings (ensure GNOME is running)
+  - name: Set minimize on click
+    shell: gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+    become_user: "{{ ansible_user }}"
+  
+  - name: Set system appearance and color
+    shell: |
+      gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+      gsettings set org.gnome.desktop.interface accent-color 'orange'
+    become_user: "{{ ansible_user }}"
+    
+  # Install general packages
+  - name: Install general packages
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - vim
+      - gparted
+      - rclone
+      - virtualbox
+      - htop
+      - zsh
+      - rar
+      - unrar
+      - p7zip-full
+      - p7zip-rar
+      - code
+  
+  - name: Remove GNOME extras
+    apt:
+      name: "{{ item }}"
+      state: absent
+    loop:
+      - gnome-mines
+      - gnome-sudoku
+  
+  # Opt out from problem reporting
+  - name: Purge whoopsie and disable apport service
+    shell: |
+      apt purge whoopsie
+      systemctl stop apport.service
+      systemctl disable apport.service
+  
+  - name: Install Docker (only if Docker is not installed)
+    shell: curl -fsSL https://get.docker.com | sh
+    args:
+      creates: /usr/bin/docker
+  
+  - name: Install Oh-My-Zsh (only if not installed)
+    shell: sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+    become_user: "{{ ansible_user }}"
+    args:
+      creates: "{{ ansible_user_home }}/.oh-my-zsh/oh-my-zsh.sh"
+
+  # Reminder for VMware Workstation
+  - name: Reminder for VMware installation
+    debug:
+      msg: "Remember to install VMware Workstation manually from VMware's official website."
+  
+  # Signal installation
+  - name: Install Signal
+    block:
+    - name: Add Signal key and repository
+      shell: |
+        wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+        cat signal-desktop-keyring.gpg > /usr/share/keyrings/signal-desktop-keyring.gpg
+        echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' > /etc/apt/sources.list.d/signal-xenial.list
+
+    - name: Install Signal Desktop
+      apt:
+        name: signal-desktop
+        state: present
+        update_cache: yes
+
+  # Google Chrome installation (cleaner installation)
+  - name: Download Google Chrome
+    get_url:
+      url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      dest: /tmp/google-chrome-stable_current_amd64.deb
+    when: not (google_chrome_installed.stat.exists)
+
+  - name: Check if Google Chrome is installed
+    stat:
+      path: /usr/bin/google-chrome-stable
+    register: google_chrome_installed
+  
+  - name: Install Google Chrome
+    apt:
+      deb: /tmp/google-chrome-stable_current_amd64.deb
+    when: not (google_chrome_installed.stat.exists)
+
+  - name: Reminder for extensions
+    debug:
+      msg: "Remember to manually install uBlock Origin, SponsorBlock, Decentraleyes, and LastPass extensions on Firefox and Chrome."
+  
+  # UFW configuration using ufw module
+  - name: Install UFW
+    apt:
+      name: ufw
+      state: present
+
+  - name: Enable UFW
+    ufw:
+      state: enabled
+  
+  - name: Allow SSH through UFW
+    ufw:
+      rule: allow
+      name: ssh
+

@@ -1,0 +1,25 @@
+
+
+#Notes for the AWS Learning Accelerator course.
+
+
+Cloudtopia passport office.
+
+What do I think should be used?
+
+- s3 for image storage
+- idk for compute and facial recognition
+- RDS for database
+- SNS for notifications
+- AWS api?
+
+The correct options are:
+
+- image storage: s3
+- Compute, API: AWS Fargate (services) (it’s great for managing APIs), AWS Lambda (lambda suffers from something called cold starts) (has direct integrations with other AWS services),
+- Facial Recognition: Amazon rekognition. (has confidence bands, integration with other services, etc)
+- Database: Amazon DynamoDB (horizontally scalable)
+- Notifications: (Amazon SNS; what we would need)
+- API: (amazon API Gateway)
+
+

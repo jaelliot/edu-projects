@@ -1,0 +1,23 @@
+---
+- name: Repositories setup
+  hosts: web_scraping
+  become: true
+  vars:
+    apt_repositories:
+      - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
+      - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} main"
+      - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
+      - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} restricted"
+      - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} multiverse"
+  tasks:
+    - name: Install apt repositories.
+      ansible.builtin.apt_repository:
+        repo: "{{ item }}"
+        state: present
+        update_cache: true
+      loop: "{{ apt_repositories }}"
+      when:
+        - apt_repositories is defined
+        - apt_repositories is iterable
+        - apt_repositories | length > 0
+

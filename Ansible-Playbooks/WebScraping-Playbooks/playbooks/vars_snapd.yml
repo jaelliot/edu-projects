@@ -1,0 +1,8 @@
+snap_packages:
+  - name: vscode
+    classic: true
+    state: present
+  - name: another-snap
+    state: present
+  - name: yet-another-snap
+

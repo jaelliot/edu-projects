@@ -1,0 +1,21 @@
+---
+- name: Google Chrome installation
+  hosts: web_scraping
+  become: yes
+  tasks:
+    - name: Check if Google Chrome is installed
+      stat:
+        path: /usr/bin/google-chrome-stable
+      register: google_chrome_installed
+
+    - name: Download Google Chrome
+      get_url:
+        url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        dest: /tmp/google-chrome-stable_current_amd64.deb
+      when: not (google_chrome_installed.stat.exists)
+
+    - name: Install Google Chrome
+      apt:
+        deb: /tmp/google-chrome-stable_current_amd64.deb
+      when: not (google_chrome_installed.stat.exists)
+

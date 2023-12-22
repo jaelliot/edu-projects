@@ -1,0 +1,34 @@
+---
+- name: Miscellaneous tasks
+  hosts: web_scraping
+  become: yes
+  tasks:
+    - name: Remove GNOME extras
+      apt:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - gnome-mines
+        - gnome-sudoku
+
+    - name: Purge whoopsie and disable apport service
+      shell: |
+        apt purge whoopsie
+        systemctl stop apport.service
+        systemctl disable apport.service
+
+    - name: Install Docker
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Install Oh-My-Zsh
+      shell: sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+      become_user: "{{ ansible_user }}"
+      args:
+        creates: "{{ ansible_user_home }}/.oh-my-zsh/oh-my-zsh.sh"
+
+    - name: Execute arbitrary user script
+      ansible.builtin.command: "{{ user_script }}"
+      changed_when: false
+

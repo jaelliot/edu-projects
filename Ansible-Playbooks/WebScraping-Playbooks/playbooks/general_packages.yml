@@ -1,0 +1,23 @@
+---
+- name: General packages installation
+  hosts: web_scraping
+  become: yes
+  tasks:
+    - name: Install general packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - vim
+        - gparted
+        - rclone
+        - virtualbox
+        - htop
+        - zsh
+        - rar
+        - unrar
+        - p7zip-full
+        - p7zip-rar
+        - code
+        - python3-pip
+

@@ -1,0 +1,57 @@
+# My updated .gitignore file for best practices in security, file size management, and excluding executables.
+
+# Terraform-specific files
+# Ignoring local .terraform directories to prevent large provider files and state files.
+**/.terraform/*
+# Ignore all .tfstate files to prevent state being uploaded.
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+# Ignore variables file that may contain sensitive default values.
+*.tfvars
+#Ignore Terraform lock files.
+*.terraform.lock.hcl
+
+# Logs and databases:
+# General logs and database files can contain sensitive or unnecessary information.
+*.log
+*.sql
+*.sqlite
+
+# Dependency directories:
+# Node modules and vendor folders can be large and should be installed through package managers.
+node_modules/
+vendor/
+
+# Local configuration files:
+# Environment files usually contain sensitive information like API keys, passwords.
+.env
+# MacOS folder icon settings, not relevant to the project.
+.DS_Store
+
+# Compiled source and executables:
+# These files can be platform-specific and should not be committed. Executables can pose a security risk.
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Large files and executables:
+# Ignoring large files and various types of executables.
+# Replace with specific paths or patterns for large files known to your project.
+*.tar.gz
+*.zip
+*.rar
+*.7z
+*.mp4
+*.iso
+
+# Additional file types to consider:
+# Office temporary files, image caches, etc.
+*.tmp
+*.temp
+*.swp
+*.swo
+

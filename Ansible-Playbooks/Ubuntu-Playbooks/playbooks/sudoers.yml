@@ -1,0 +1,9 @@
+---
+- name: Copy sudoers configuration into place.
+  become: true
+  ansible.builtin.copy:
+    content: "{{ sudoers_custom_config }}"
+    dest: /etc/sudoers.d/custom
+    mode: 0440
+    validate: "visudo -cf %s"
+

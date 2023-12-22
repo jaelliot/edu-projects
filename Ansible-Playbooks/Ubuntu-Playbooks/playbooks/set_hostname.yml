@@ -1,0 +1,8 @@
+---
+- name: Set hostname.
+  become: true
+  hostname:
+    name: "{{ custom_hostname }}"
+    use: systemd
+  when: custom_hostname is defined and custom_hostname != 'undefined'
+

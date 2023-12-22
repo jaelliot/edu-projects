@@ -1,0 +1,37 @@
+---
+- name: Web scraping tools installation
+  hosts: web_scraping
+  become: yes
+  tasks:
+    - name: Install web scraping tools
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3-bs4
+        - python3-lxml
+        - selenium
+        - chromium-chromedriver
+        - wget
+        - webhttrack
+        - ffmpeg
+
+    - name: Install yt-dlp
+      shell: |
+        sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+        sudo chmod a+rx /usr/local/bin/yt-dlp
+
+    - name: Install Scrapy
+      pip:
+        name: scrapy
+        executable: pip3
+
+    - name: Install wayback_machine_downloader
+      gem:
+        name: wayback_machine_downloader
+
+    - name: Install gallery-dl
+      pip:
+        name: gallery-dl
+        executable: pip3
+

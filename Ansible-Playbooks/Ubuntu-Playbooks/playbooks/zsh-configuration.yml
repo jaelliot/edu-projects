@@ -1,0 +1,57 @@
+---
+- name: Configure ZSH and Oh My ZSH
+  hosts: ubuntu_desktop  # Adjusted the hosts value from 'web_scraping' to 'ubuntu_desktop' to match the other playbooks
+  become: yes
+  tasks:
+    - name: Set OMZ install path.
+      ansible.builtin.set_fact:
+        omz_path: "{{ omz_install_path | default(ansible_env.HOME + '/.oh-my-zsh') }}"
+
+    - name: Ensure ZSH is installed.
+      ansible.builtin.apt:
+        name: zsh
+        state: latest
+
+    - name: Install Oh My ZSH.
+      ansible.builtin.git:
+        repo: https://github.com/ohmyzsh/ohmyzsh.git
+        dest: "{{ omz_path }}"
+        clone: true
+        update: true
+      register: omz_installation_result
+      failed_when: omz_installation_result is failed
+
+    - name: Install ZSH Plugins.
+      ansible.builtin.git:
+        repo: "https://github.com/{{ item }}.git"
+        dest: "{{ omz_path }}/custom/plugins/{{ item.split('/')[1] }}"
+        clone: true
+        update: true
+      loop: "{{ zsh_plugins }}"
+      when: zsh_plugins is defined
+      register: plugin_installation_result
+      failed_when: plugin_installation_result is failed
+
+    - name: Install ZSH Themes.
+      ansible.builtin.git:
+        repo: "https://github.com/{{ item }}.git"
+        dest: "{{ omz_path }}/custom/themes/{{ item.split('/')[1] }}"
+        clone: true
+        update: true
+      loop: "{{ zsh_themes }}"
+      when: zsh_themes is defined
+      register: theme_installation_result
+      failed_when: theme_installation_result is failed
+
+    - name: Check current default shell.
+      ansible.builtin.command:
+        cmd: "getent passwd {{ username }} | cut -d: -f7"
+      register: current_shell
+      changed_when: False
+      ignore_errors: true
+
+    - name: Set ZSH as the default shell for the user.
+      ansible.builtin.user:
+        name: "{{ username }}"
+        shell: /bin/zsh
+      when: current_shell.stdout != "/bin/zsh"

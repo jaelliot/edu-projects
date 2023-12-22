@@ -1,0 +1,46 @@
+- **Step 1:** Access AWS Management Console. Search for and open 'API Gateway'.
+
+- **Step 2:** Click on 'Create API'. Select 'HTTP API' and then click on 'Build'.
+
+- **Step 3:** Under 'Add integration', select 'Lambda'. If Lambda function not created yet, pause this process.
+
+- **Step 4:** To create a Lambda function, open a new tab in the console and navigate to the Lambda service.
+
+- **Step 5:** Click on 'Create function'. Name it (e.g., 'personAPI lambda'). Select runtime (e.g., Python 3.9). Keep default settings and click 'Create Function'.
+
+- **Step 6:** In Lambda function code, add a line to print the event (for debugging purposes). Deploy the function.
+
+- **Step 7:** Return to API Gateway tab. Refresh to see the new Lambda function. Select it as the integration target.
+
+- **Step 8:** Configure API Gateway. If needed, assign different Lambda functions to different HTTP methods (GET, POST, etc.).
+
+- **Step 9:** Rename the Resource Path (e.g., 'getPerson'). Assign HTTP methods to the path.
+
+- **Step 10:** Set up stages (test, prod, etc.). Decide on auto-deploy settings.
+
+- **Step 11:** Confirm settings and create the API. Note down the invoke URL.
+
+- **Step 12:** Test the API using the browser for GET requests. For POST requests, use tools like Postman.
+
+- **Step 13:** To test parameter handling, append query parameters (e.g., `?personID=5`) in the API URL.
+
+- **Step 14:** Monitor the Lambda function logs for events. Adjust the function code to process events as needed.
+
+- **Step 15:** Update the Lambda function to return specific data based on the request.
+
+- **Step 16:** Deploy updated Lambda function. Test the API endpoint again.
+
+- **Step 17:** Check the output and consult CloudWatch logs for confirmation of correct data processing.
+
+- **Step 18:** In CloudWatch, verify the latest log stream to ensure proper logging of the new requests.
+
+- **Step 19:** If needed, configure multiple Lambda targets in API Gateway for different request types (e.g., GET for 'getPerson', POST for 'createPerson').
+
+- **Step 20:** In Lambda function, include logic to handle different request types (if using the same function for multiple methods).
+
+- **Step 21:** If using different Lambda functions for different request types, adjust the API Gateway settings accordingly.
+
+- **Step 22:** Regularly update and redeploy the Lambda function as your API evolves or requires new features.
+
+- **Step 23:** Continuously monitor the API and Lambda performance, adjusting configurations for optimal operation.
+
